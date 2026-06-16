@@ -74,8 +74,7 @@ useEffect(()=>{
 return (
 
 <div className='flex-1 flex flex-col justify-between 
-m-5 md:m-10 xl:mx-30 max-md:mt-14
-bg-[#fafafa] dark:bg-transparent'>
+m-5 md:m-10 xl:mx-30 max-md:mt-14'>
 
 
 <div ref={containerRef}
@@ -134,7 +133,11 @@ messages.map((message,index)=>
 
 {mode === "image" && (
   <div className="flex items-center justify-center gap-2 mb-4">
-    <label className="text-sm font-medium !text-black">
+    <label
+  className={`text-sm font-medium ${
+    theme === "dark" ? "text-white" : "text-black"
+  }`}
+>
       Publish Generated Image to Community
     </label>
 

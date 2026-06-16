@@ -13,7 +13,7 @@ import { Toaster } from 'react-hot-toast'
 
 const App = () => {
 
-  const { user, loadingUser } = useAppContext()
+  const { user, loadingUser, theme } = useAppContext()
 
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const { pathname } = useLocation()
@@ -38,9 +38,11 @@ const App = () => {
       {user ? (
 
         <div
-          style={{
-            background: "#f8f8f8"
-          }}
+          className={`h-screen w-screen ${
+            theme === 'dark'
+              ? 'bg-gradient-to-b from-[#1c1529] via-[#0f0b18] to-black'
+              : 'bg-[#f8f8f8]'
+          }`}
         >
           <div className='flex h-screen w-screen'>
 
@@ -60,7 +62,13 @@ const App = () => {
 
       ) : (
 
-        <div className='bg-white flex items-center justify-center h-screen w-screen'>
+        <div
+          className={`flex items-center justify-center h-screen w-screen ${
+            theme === 'dark'
+              ? 'bg-gradient-to-b from-[#1c1529] via-[#0f0b18] to-black'
+              : 'bg-white'
+          }`}
+        >
           <Login />
         </div>
 
