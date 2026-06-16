@@ -4,7 +4,8 @@ import Chat from "../models/Chat.js"
 // API controller for creating a new chat
 export const createChat = async (req, res) => {
     try {
-        const userId = req.user._id
+        console.log("USER =", req.user);
+        const userId = req.user._id;
 
         const chatData = {
             userId,
@@ -12,11 +13,13 @@ export const createChat = async (req, res) => {
             name: "New Chat",
             userName: req.user.name
 
-        }
+        };
 
-        await Chat.create(chatData)
-        res.json({success: true, message: "Chat created"})
+        const chat = await Chat.create(chatData);
+        console.log("CHAT CREATED =", chat);
+        res.json({success: true, message: "Chat created"});
     } catch (error) {
+        console.log("CREATE CHAT ERROR =", error);
         res.json({ success: false, message: error.message });
         
     }
