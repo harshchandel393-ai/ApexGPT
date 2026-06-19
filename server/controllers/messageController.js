@@ -142,7 +142,15 @@ export const imageMessageController = async (req, res) => {
       success: true,
       reply,
     });
-  } catch (error) {
+    } catch (error) {
+    console.log("===== IMAGE GENERATION ERROR =====");
+    console.log(error);
+
+    if (error.response) {
+      console.log("Status:", error.response.status);
+      console.log("Data:", error.response.data);
+    }
+
     res.json({
       success: false,
       message: error.message,
