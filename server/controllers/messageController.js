@@ -1,3 +1,68 @@
+import axios from "axios";
+import Chat from "../models/Chat.js";
+import User from "../models/user.js";
+import imagekit from "../configs/imageKit.js";
+import openai from "../configs/openai.js";
+
+export const textMessageController = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { chatId, prompt } = req.body;
+
+    const chat = await Chat.findOne({ userId, _id: chatId });
+
+    if (!chat) {
+      return res.json({
+        success: false,
+        message: "Chat not found",
+      });
+    }
+
+    chat.messages.push({
+      role: "user",
+      content: prompt,
+      timestamp: Date.now(),
+      isImage: false,
+    });
+
+    const { choices } = await openai.chat.completions.create({
+      model: "gemini-2.5-flash",
+      messages: [
+        {
+          role: "user",
+          content: prompt,
+        },
+      ],
+    });
+
+    const reply = {
+      role: "assistant",
+      content: choices[0].message.content,
+      timestamp: Date.now(),
+      isImage: false,
+    };
+
+    chat.messages.push(reply);
+
+    await chat.save();
+
+    await User.updateOne(
+      { _id: userId },
+      { $inc: { credits: -1 } }
+    );
+
+    return res.json({
+      success: true,
+      reply,
+    });
+  } catch (error) {
+    return res.json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 // Image Generation Message Controller
 export const imageMessageController = async (req, res) => {
   try {
