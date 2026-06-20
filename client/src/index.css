@@ -12,13 +12,31 @@
     display: none;
 }
 
-.reset-tw :not(pre):not(code){
+/* .reset-tw :not(pre):not(code){
   all: revert;
-}
+} */
 
 .loader div:nth-child(2){
   animation-delay: 0.2s;
 }
 .loader div:nth-child(3){
   animation-delay: 0.4s;
+}
+
+.reset-tw,
+.reset-tw * {
+  color: inherit;
+}
+
+.dark .reset-tw h1,
+.dark .reset-tw h2,
+.dark .reset-tw h3,
+.dark .reset-tw h4,
+.dark .reset-tw h5,
+.dark .reset-tw h6,
+.dark .reset-tw p,
+.dark .reset-tw li,
+.dark .reset-tw strong,
+.dark .reset-tw code {
+  color: white !important;
 }
