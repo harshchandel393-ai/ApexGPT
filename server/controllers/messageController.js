@@ -65,6 +65,8 @@ export const textMessageController = async (req, res) => {
 
 // Image Generation Message Controller
 export const imageMessageController = async (req, res) => {
+  let generatedImageUrl = "";
+
   try {
     const userId = req.user._id;
 
@@ -96,22 +98,17 @@ export const imageMessageController = async (req, res) => {
       isImage: false,
     });
 
-    const encodedPrompt = encodeURIComponent(prompt);
+console.log("================================");
+console.log("Generating image with Pollinations...");
+console.log("Prompt:", prompt);
+console.log("================================");
 
-    const generatedImageUrl =
-      `${process.env.IMAGEKIT_URL_ENDPOINT}` +
-      `/ik-genimg-prompt-${encodedPrompt}` +
-      `/quickgpt/${Date.now()}.png?tr=w-800,h-800`;
+const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}`;
 
-    console.log("================================");
-    console.log("IMAGEKIT_URL_ENDPOINT:", process.env.IMAGEKIT_URL_ENDPOINT);
-    console.log("Generated URL:", generatedImageUrl);
-    console.log("Prompt:", prompt);
-    console.log("================================");
-
-    const aiImageResponse = await axios.get(generatedImageUrl, {
-      responseType: "arraybuffer",
-    });
+const aiImageResponse = await axios.get(imageUrl, {
+  responseType: "arraybuffer",
+  timeout: 120000,
+});  
 
     const base64Image = `data:image/png;base64,${Buffer.from(
       aiImageResponse.data
@@ -146,8 +143,9 @@ export const imageMessageController = async (req, res) => {
     });
 
   } catch (error) {
-    console.log("===== IMAGE GENERATION ERROR =====");
+    console.log("===== IMAGE ERROR =====");
     console.log("MESSAGE:", error.message);
+    console.log("URL:", generatedImageUrl);
 
     if (error.response) {
       console.log("STATUS:", error.response.status);
@@ -161,6 +159,8 @@ export const imageMessageController = async (req, res) => {
         console.log("DATA:", error.response.data);
       }
     }
+
+    console.log("FULL ERROR:", error);
 
     return res.status(500).json({
       success: false,
