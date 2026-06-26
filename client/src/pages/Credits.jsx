@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react'
 import { dummyPlans } from '../assets/assets'
 import Loading from './Loading'
 import { useAppContext } from '../context/AppContext'
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
+
 const Credits = () => {
 
   const [plans, setPlans] = useState([])
   const [loading, setLoading] = useState(true)
-  const {token, axios } = useAppContext()
-
+  const { token, axios } = useAppContext()
   const { theme } = useAppContext()
 
   const fetchPlans = async () => {
@@ -16,9 +16,9 @@ const Credits = () => {
       const { data } = await axios.get('/api/credit/plan', {
         headers: { Authorization: token }
       })
-      if (data.success){
+      if (data.success) {
         setPlans(data.plans)
-      }else{
+      } else {
         toast.error(data.message || 'Failed to fetch plans.')
       }
     } catch (error) {
@@ -27,21 +27,20 @@ const Credits = () => {
     setLoading(false)
   }
 
-     const purchasePlan = async (planId) => {
-      try {
-        const { data } = await axios.post('/api/credit/purchase', {planId},
-          {headers: { Authorization: token }}
-        )
-        if (data.success) {
-          window.location.href = data.url
-        }else{
-          toast.error(data.message)
-        }
-      } catch (error) {
-        toast.error(error.message)
-        
+  const purchasePlan = async (planId) => {
+    try {
+      const { data } = await axios.post('/api/credit/purchase', { planId },
+        { headers: { Authorization: token } }
+      )
+      if (data.success) {
+        window.location.href = data.url
+      } else {
+        toast.error(data.message)
       }
-     }
+    } catch (error) {
+      toast.error(error.message)
+    }
+  }
 
   useEffect(() => {
     fetchPlans()
@@ -50,87 +49,99 @@ const Credits = () => {
   if (loading) return <Loading />
 
   return (
-    <div className="max-w-7xl h-screen overflow-y-scroll mx-auto px-4 sm:px-6 lg:px-8 pt-16">
+    <div className={`min-h-screen overflow-y-auto ${theme === 'dark' ? 'bg-[#0a0a0a]' : 'bg-[#f8fafc]'}`}>
+      {/* Header */}
+      <header className={`sticky top-0 z-10 px-6 py-4 border-b
+        ${theme === 'dark' ? 'bg-[#0a0a0a] border-gray-800' : 'bg-white border-gray-200'}
+      `}>
+        <h1 className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+          Credit Plans
+        </h1>
+      </header>
 
-      <h2
-        className={`text-5xl font-bold text-center mb-14 ${
-          theme === 'dark' ? 'text-white' : 'text-black'
-        }`}
-      >
-        Credit Plans
-      </h2>
+      <div className="max-w-5xl mx-auto px-4 py-8">
+        <p className={`text-center mb-10 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+          Choose a plan that fits your needs. More credits = more possibilities.
+        </p>
 
-      <div className="flex flex-wrap justify-center items-start gap-8">
-
-        {plans.map((plan) => (
-
-          <div
-            key={plan._id}
-            className={`rounded-2xl border transition-all duration-300 p-7 min-w-[320px] flex flex-col ${
-              plan._id === 'pro'
-                ? theme === 'dark'
-                  ? 'bg-[#6B2BBF] border-[#6B2BBF] text-white'
-                  : 'bg-purple-50 border-purple-200 text-gray-900'
-                : theme === 'dark'
-                  ? 'bg-black/40 border-purple-700 text-white'
-                  : 'bg-white border-gray-200 text-gray-900 shadow-sm'
-            }`}
-          >
-
-            <div className="flex-1">
-
-              <h3
-                className={`text-2xl font-semibold mb-5 ${
-                  theme === 'dark' ? 'text-white' : 'text-gray-900'
-                }`}
-              >
-                {plan.name}
-              </h3>
-
-              <p className="text-4xl font-bold text-[#D8B4FE] mb-7">
-                ${plan.price}
-
-                <span
-                  className={`text-lg font-normal ${
-                    theme === 'dark'
-                      ? 'text-purple-100'
-                      : 'text-gray-600'
-                  }`}
-                >
-                  {' '} / {plan.credits} credits
-                </span>
-              </p>
-
-              <ul
-                className={`space-y-4 ${
-                  theme === 'dark'
-                    ? 'text-gray-200'
-                    : 'text-gray-700'
-                }`}
-              >
-                {plan.features.map((feature, index) => (
-                  <li key={index} className="flex items-center gap-2">
-                    <span>•</span>
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
-
-            </div>
-
-            <button onClick={()=> toast.promise(purchasePlan(plan._id), {loading: 'Processing...'
-            })}
-              className="mt-8 bg-gradient-to-r from-purple-500 to-purple-600 text-white py-3 rounded-lg font-medium cursor-pointer hover:opacity-90"
+        <div className="grid md:grid-cols-3 gap-6">
+          {plans.map((plan) => (
+            <div
+              key={plan._id}
+              className={`
+                rounded-2xl border p-6 flex flex-col transition-all duration-300
+                ${plan._id === 'pro'
+                  ? theme === 'dark'
+                    ? 'bg-gradient-to-b from-emerald-900/30 to-[#0a0a0a] border-emerald-600 shadow-lg shadow-emerald-500/10'
+                    : 'bg-gradient-to-b from-emerald-50 to-white border-emerald-200 shadow-lg'
+                  : theme === 'dark'
+                    ? 'bg-[#111111] border-gray-800 hover:border-gray-700'
+                    : 'bg-white border-gray-200 hover:border-gray-300'
+                }
+              `}
             >
-              Buy Now
-            </button>
+              <div className="flex-1">
+                {/* Plan Name */}
+                <h3 className={`text-xl font-bold mb-2
+                  ${plan._id === 'pro'
+                    ? theme === 'dark' ? 'text-emerald-400' : 'text-emerald-600'
+                    : theme === 'dark' ? 'text-white' : 'text-gray-900'
+                  }
+                `}>
+                  {plan.name}
+                </h3>
 
-          </div>
+                {/* Price */}
+                <div className="mb-4">
+                  <span className={`text-4xl font-bold
+                    ${plan._id === 'pro'
+                      ? theme === 'dark' ? 'text-emerald-400' : 'text-emerald-600'
+                      : theme === 'dark' ? 'text-white' : 'text-gray-900'
+                    }
+                  `}>
+                    ${plan.price}
+                  </span>
+                  <span className={theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}>
+                    {' '}/ {plan.credits} credits
+                  </span>
+                </div>
 
-        ))}
+                {/* Features */}
+                <ul className="space-y-2 mb-6">
+                  {plan.features.map((feature, index) => (
+                    <li key={index} className={`text-sm flex items-center gap-2
+                      ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}
+                    `}>
+                      <svg className={`w-4 h-4 shrink-0 ${theme === 'dark' ? 'text-emerald-500' : 'text-emerald-500'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+              </div>
 
+              {/* CTA Button */}
+              <button
+                onClick={() => purchasePlan(plan._id)}
+                className={`
+                  w-full py-3 rounded-xl font-semibold transition-all duration-200
+                  ${plan._id === 'pro'
+                    ? theme === 'dark'
+                      ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-500/20'
+                      : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-500/20'
+                    : theme === 'dark'
+                      ? 'bg-gray-800 hover:bg-gray-700 text-white'
+                      : 'bg-gray-900 hover:bg-gray-800 text-white'
+                  }
+                `}
+              >
+                Get Started
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
-
     </div>
   )
 }
